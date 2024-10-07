@@ -1,30 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// TODO - fix issue with table vanishing after 10th page
 const Dashboard = () => {
   const { user } = useAuth();
-  // const navigate = useNavigate();
 
   // Card data states
   const [cardData, setCardData] = useState([]);
+  const [cardPage, setCardPage] = useState(1);
+  const [cardPageSize] = useState(10);
+  const [totalCardRecords] = useState(100);
 
-  const [cardPage, setCardPage] = useState(1); // Current page for card
-  const [cardPageSize] = useState(10); // Records per page
-  const [totalCardRecords, setTotalCardRecords] = useState(250); // Fixed total count for card data
-
+  // Profile states
   const [profileData, setProfileData] = useState([]);
-
-  const [profilePage, setProfilePage] = useState(1); // Current page for profile data
-  const [profilePageSize] = useState(10); // Records per page
-  const [totalProfileRecords, setTotalProfileRecords] = useState(150); // Fixed total count for profile data
+  const [profilePage, setProfilePage] = useState(1);
+  const [profilePageSize] = useState(10);
+  const [totalProfileRecords] = useState(100);
 
   // Loading and error states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch card data (250 records max)
+  // Fetch card data (It always returns 100)
   const fetchCardData = async () => {
     setLoading(true);
     try {
@@ -36,7 +32,7 @@ const Dashboard = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            count: 250, // Fetch all 250 records in one go
+            count: 100,
             country_code: 'en_IN',
           }),
         }
@@ -47,7 +43,7 @@ const Dashboard = () => {
       }
 
       const result = await response.json();
-      setCardData(result.data); // Store the full data
+      setCardData(result.data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -55,7 +51,7 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch profile data (150 records max)
+  // Fetch profile data (100 records max)
   const fetchProfileData = async () => {
     setLoading(true);
     try {
@@ -67,7 +63,7 @@ const Dashboard = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            count: 150, // Fetch all 150 records in one go
+            count: 100,
             country_code: 'en_IN',
             aadhar: true,
             dl: true,
@@ -85,7 +81,7 @@ const Dashboard = () => {
       }
 
       const result = await response.json();
-      setProfileData(result.data); // Store the full profile data
+      setProfileData(result.data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -93,28 +89,22 @@ const Dashboard = () => {
     }
   };
 
-  // Initial data fetching
   useEffect(() => {
     fetchCardData();
     fetchProfileData();
   }, []);
 
-  // Common function to handle pagination
   const handlePageChange = (type, direction) => {
     if (type === 'card') {
-      if (
-        direction === 'next' &&
-        cardPage < Math.ceil(totalCardRecords / cardPageSize)
-      ) {
+      const maxPage = Math.ceil(totalCardRecords / cardPageSize);
+      if (direction === 'next' && cardPage < maxPage) {
         setCardPage((prevPage) => prevPage + 1);
       } else if (direction === 'prev' && cardPage > 1) {
         setCardPage((prevPage) => prevPage - 1);
       }
     } else if (type === 'profile') {
-      if (
-        direction === 'next' &&
-        profilePage < Math.ceil(totalProfileRecords / profilePageSize)
-      ) {
+      const maxPage = Math.ceil(totalProfileRecords / profilePageSize);
+      if (direction === 'next' && profilePage < maxPage) {
         setProfilePage((prevPage) => prevPage + 1);
       } else if (direction === 'prev' && profilePage > 1) {
         setProfilePage((prevPage) => prevPage - 1);
@@ -122,11 +112,12 @@ const Dashboard = () => {
     }
   };
 
-  // Get current data to display based on pagination
+  // Get current data array to display based on pagination
   const currentCardData = cardData.slice(
     (cardPage - 1) * cardPageSize,
     cardPage * cardPageSize
-  ); // slice(0, 10) -> 10th ele is excluded i.e. so 0th to 9th index, then next slice(10, 20) and so on ...
+  );
+
   const currentProfileData = profileData.slice(
     (profilePage - 1) * profilePageSize,
     profilePage * profilePageSize
@@ -145,6 +136,9 @@ const Dashboard = () => {
       <div>
         {loading && <div>Loading card data...</div>}
         {error && <div>Error: {error}</div>}
+        {!loading && currentCardData.length === 0 && (
+          <div>No card data available.</div>
+        )}
         {!loading && !error && currentCardData.length > 0 && (
           <div>
             <h2 className='text-2xl font-bold mb-4'>Card Data</h2>
@@ -204,7 +198,7 @@ const Dashboard = () => {
               >
                 Previous
               </button>
-              <span>
+              <span className='px-3'>
                 Page {cardPage} of {Math.ceil(totalCardRecords / cardPageSize)}
               </span>
               <button
@@ -225,6 +219,9 @@ const Dashboard = () => {
       <div>
         {loading && <div>Loading profile data...</div>}
         {error && <div>Error: {error}</div>}
+        {!loading && currentProfileData.length === 0 && (
+          <div>No profile data available.</div>
+        )}
         {!loading && !error && currentProfileData.length > 0 && (
           <div className='mt-8'>
             <h2 className='text-2xl font-bold mb-4'>Profile Data</h2>
@@ -237,7 +234,7 @@ const Dashboard = () => {
                   <th className='border border-gray-300 px-4 py-2'>
                     Last Name
                   </th>
-                  <th className='border border-gray-300 px-4 py-2'>Email</th>
+                  <th className='border border-gray-300 px-4 py-2'>Credit Card</th>
                   <th className='border border-gray-300 px-4 py-2'>Aadhar</th>
                   <th className='border border-gray-300 px-4 py-2'>PAN</th>
                 </tr>
@@ -252,13 +249,13 @@ const Dashboard = () => {
                       {profile.last_name}
                     </td>
                     <td className='border border-gray-300 px-4 py-2'>
-                      {profile.email}
+                      {profile.credit_card_number}
                     </td>
                     <td className='border border-gray-300 px-4 py-2'>
                       {profile.aadhar}
                     </td>
                     <td className='border border-gray-300 px-4 py-2'>
-                      {profile.pan}
+                      {profile.pan_number}
                     </td>
                   </tr>
                 ))}
@@ -274,7 +271,7 @@ const Dashboard = () => {
               >
                 Previous
               </button>
-              <span>
+              <span className='px-3'>
                 Page {profilePage} of{' '}
                 {Math.ceil(totalProfileRecords / profilePageSize)}
               </span>
