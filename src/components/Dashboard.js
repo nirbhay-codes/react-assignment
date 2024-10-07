@@ -20,7 +20,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch card data (It always returns 100)
+  // Fetch card data (API always returns 100)
   const fetchCardData = async () => {
     setLoading(true);
     try {
@@ -51,7 +51,7 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch profile data (100 records max)
+  // Fetch profile data (API always returns 100 records)
   const fetchProfileData = async () => {
     setLoading(true);
     try {
@@ -234,7 +234,9 @@ const Dashboard = () => {
                   <th className='border border-gray-300 px-4 py-2'>
                     Last Name
                   </th>
-                  <th className='border border-gray-300 px-4 py-2'>Credit Card</th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Credit Card
+                  </th>
                   <th className='border border-gray-300 px-4 py-2'>Aadhar</th>
                   <th className='border border-gray-300 px-4 py-2'>PAN</th>
                 </tr>
