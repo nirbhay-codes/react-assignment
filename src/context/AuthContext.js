@@ -35,8 +35,9 @@ export const AuthProvider = ({ children }) => {
       }
 
       const userData = await response.json();
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData)); // Save user to localStorage
+      const {email } = userData;
+      setUser(email);
+      localStorage.setItem('user', JSON.stringify(email)); // Save user to localStorage
       navigate('/dashboard'); // Redirect to dashboard after signup
     } catch (error) {
       alert(error.message);
@@ -60,8 +61,9 @@ export const AuthProvider = ({ children }) => {
       }
 
       const userData = await response.json();
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData)); // Save user to localStorage
+      const {email } = userData;
+      setUser(email);
+      localStorage.setItem('user', JSON.stringify(email)); // Save user to localStorage
       navigate('/dashboard'); // Redirect to dashboard after login
     } catch (error) {
       alert(error.message);

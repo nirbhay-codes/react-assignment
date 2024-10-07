@@ -16,7 +16,7 @@ const Header = () => {
       <h1 className='text-xl font-bold'>Test React App</h1>
       {user ? (
         <div className='flex items-center'>
-          <p className='mr-4'>Hello, {user.email}</p>
+          <p className='mr-4'>Hello, {user}</p>
           <button
             className='px-4 py-2 bg-red-500 rounded'
             onClick={handleLogout}
