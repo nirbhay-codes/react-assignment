@@ -7,10 +7,9 @@ const app = express();
 const PORT = 5000;
 const USERS_FILE = 'users.json';
 
-app.use(cors()); // TODO - check usage
-app.use(bodyParser.json());// TODO - check usage
+app.use(cors());
+app.use(bodyParser.json());
 
-// Read users from JSON file
 const readUsersFromFile = () => {
   if (fs.existsSync(USERS_FILE)) {
     const data = fs.readFileSync(USERS_FILE);
@@ -19,7 +18,6 @@ const readUsersFromFile = () => {
   return [];
 };
 
-// Write users to JSON file
 const writeUsersToFile = (users) => {
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 };

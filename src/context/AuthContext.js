@@ -1,20 +1,17 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-// Create the AuthContext
 export const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
-// AuthProvider component to wrap the entire app
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // Load user from localStorage on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser); // Restore user from localStorage
+      setUser(parsedUser); // restore user from localStorage
     }
   }, []);
 
