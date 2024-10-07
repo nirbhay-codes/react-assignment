@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -6,16 +6,16 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!user) {
-      navigate('/');
-    }
-  }, [user, navigate]);
+  // // Redirect to login if not authenticated
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate('/');
+  //   }
+  // }, [user, navigate]);
 
   const handleLogout = () => {
     logout();
-    navigate('/'); // Redirect to login after logout
+    navigate('/login'); // Redirect to login after logout
   };
 
   if (!user) {
