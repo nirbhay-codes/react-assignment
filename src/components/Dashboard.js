@@ -16,11 +16,15 @@ const Dashboard = () => {
   const [profilePageSize] = useState(10);
   const [totalProfileRecords] = useState(100);
 
+  // Search states
+  const [cardSearchTerm, setCardSearchTerm] = useState('');
+  const [profileSearchTerm, setProfileSearchTerm] = useState('');
+
   // Loading and error states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch card data (API always returns 100)
+  // Fetch card data
   const fetchCardData = async () => {
     setLoading(true);
     try {
@@ -51,7 +55,7 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch profile data (API always returns 100 records)
+  // Fetch profile data
   const fetchProfileData = async () => {
     setLoading(true);
     try {
@@ -113,15 +117,33 @@ const Dashboard = () => {
   };
 
   // Get current data array to display based on pagination
-  const currentCardData = cardData.slice(
-    (cardPage - 1) * cardPageSize,
-    cardPage * cardPageSize
-  );
+  const currentCardData = cardData
+    .filter(
+      (card) =>
+        card.card_number.toString().includes(cardSearchTerm.toLowerCase()) // Filter for card number search
+    ) // Filter for card search
+    .slice((cardPage - 1) * cardPageSize, cardPage * cardPageSize);
 
-  const currentProfileData = profileData.slice(
-    (profilePage - 1) * profilePageSize,
-    profilePage * profilePageSize
-  );
+  const currentProfileData = profileData
+    .filter(
+      (profile) =>
+        profile.first_name
+          .toLowerCase()
+          .includes(profileSearchTerm.toLowerCase()) || // Filter for profile search
+        profile.last_name
+          .toLowerCase()
+          .includes(profileSearchTerm.toLowerCase()) ||
+        profile.aadhar
+          .toLowerCase()
+          .includes(profileSearchTerm.toLowerCase()) ||
+        profile.credit_card_number
+          .toLowerCase()
+          .includes(profileSearchTerm.toLowerCase()) ||
+        profile.debit_card_number
+          .toLowerCase()
+          .includes(profileSearchTerm.toLowerCase())
+    )
+    .slice((profilePage - 1) * profilePageSize, profilePage * profilePageSize);
 
   if (!user) {
     return null; // or redirect to login
@@ -131,6 +153,15 @@ const Dashboard = () => {
     <div className='p-10'>
       <h1 className='text-3xl font-bold mb-6'>Welcome to your Dashboard</h1>
       <p className='text-xl mb-6'>Hello, {user}</p>
+
+      {/* Card Search */}
+      <input
+        type='text'
+        placeholder='Search Card Number...'
+        className='border border-gray-300 rounded-md p-2 mb-4 w-full'
+        value={cardSearchTerm}
+        onChange={(e) => setCardSearchTerm(e.target.value)}
+      />
 
       {/* Card Data Table */}
       <div>
@@ -215,6 +246,15 @@ const Dashboard = () => {
         )}
       </div>
 
+      {/* Profile Search */}
+      <input
+        type='text'
+        placeholder='Search First or Last Name or Aadhaar or Credit Card or Debit Card number...'
+        className='border border-gray-300 rounded-md p-2 mb-4 w-full mt-8'
+        value={profileSearchTerm}
+        onChange={(e) => setProfileSearchTerm(e.target.value)}
+      />
+
       {/* Profile Data Table */}
       <div>
         {loading && <div>Loading profile data...</div>}
@@ -223,7 +263,7 @@ const Dashboard = () => {
           <div>No profile data available.</div>
         )}
         {!loading && !error && currentProfileData.length > 0 && (
-          <div className='mt-8'>
+          <div>
             <h2 className='text-2xl font-bold mb-4'>Profile Data</h2>
             <table className='min-w-full border border-gray-300'>
               <thead>
@@ -234,11 +274,69 @@ const Dashboard = () => {
                   <th className='border border-gray-300 px-4 py-2'>
                     Last Name
                   </th>
+                  <th className='border border-gray-300 px-4 py-2'>Sex</th>
                   <th className='border border-gray-300 px-4 py-2'>
-                    Credit Card
+                    Date of Birth
                   </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Father's Name
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>Address</th>
                   <th className='border border-gray-300 px-4 py-2'>Aadhar</th>
-                  <th className='border border-gray-300 px-4 py-2'>PAN</th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Credit Card Number
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Credit Card CVV
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Credit Card Expiry
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Credit Card Provider
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Debit Card Number
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Debit Card CVV
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Debit Card Expiry
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Debit Card Provider
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Driving License Number
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    License Issue Date
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    License Expiry Date
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    PAN Number
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    PAN Status
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Passport Number
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Passport Type
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Nationality
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Passport Issue Date
+                  </th>
+                  <th className='border border-gray-300 px-4 py-2'>
+                    Passport Expiry Date
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -251,13 +349,73 @@ const Dashboard = () => {
                       {profile.last_name}
                     </td>
                     <td className='border border-gray-300 px-4 py-2'>
-                      {profile.credit_card_number}
+                      {profile.sex}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.dob}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.father_name}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.address}
                     </td>
                     <td className='border border-gray-300 px-4 py-2'>
                       {profile.aadhar}
                     </td>
                     <td className='border border-gray-300 px-4 py-2'>
+                      {profile.credit_card_number}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.credit_card_cvv}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.credit_card_expiry}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.credit_card_provider}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.debit_card_number}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.debit_card_cvv}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.debit_card_expiry}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.debit_card_provider}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.driving_licence_number}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.driving_licence_date_of_issue}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.driving_licence_date_of_expiry}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
                       {profile.pan_number}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.pan_status}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.passport_number}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.passport_type}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.nationality}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.passport_date_of_issue}
+                    </td>
+                    <td className='border border-gray-300 px-4 py-2'>
+                      {profile.passport_date_of_expiry}
                     </td>
                   </tr>
                 ))}

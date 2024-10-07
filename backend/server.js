@@ -4,8 +4,8 @@ const cors = require('cors');
 const fs = require('fs');
 
 const app = express();
-const PORT = 5000; // You can change this port if needed
-const USERS_FILE = 'users.json'; // This file will store user data
+const PORT = 5000;
+const USERS_FILE = 'users.json';
 
 app.use(cors()); // TODO - check usage
 app.use(bodyParser.json());// TODO - check usage
@@ -29,13 +29,11 @@ app.post('/api/signup', (req, res) => {
   const { email, password } = req.body;
   const users = readUsersFromFile();
 
-  // Check if user already exists
   const existingUser = users.find((user) => user.email === email);
   if (existingUser) {
     return res.status(400).json({ message: 'User already exists' });
   }
 
-  // Add new user
   const newUser = { email, password };
   users.push(newUser);
   writeUsersToFile(users);
